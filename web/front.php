@@ -8,6 +8,7 @@ use Symfony\Component\Routing;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpKernel\HttpCache;
 
 $request = Request::createFromGlobals();
 $routes = include __DIR__.'/../src/app.php';
@@ -23,6 +24,10 @@ $controllerResolver = new ControllerResolver();
 $argumentResolver = new ArgumentResolver();
 
 $framework = new Simplex\Framework($dispatcher, $matcher, $controllerResolver, $argumentResolver);
+$framework = new HttpCache\HttpCache(
+    $framework,
+    new HttpCache\Store(__DIR__.'/../cache')
+);
 $response = $framework->handle($request);
 
 $response->send();
